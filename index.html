@@ -193,52 +193,6 @@ class="article article-type-post"
     <div class="article-entry post-inner-html">
         
         <h2 id="零、前言"><a href="#零、前言" class="headerlink" title="零、前言"></a>零、前言</h2><p>不知道大家有没有用过随机图 API。这种东西对于使用者来说非常方便，只需要引用 API 链接就可以。而网上的大部分教程都是基于 PHP，所以我这次来介绍一下 GitHub+Cloudflare Workers 的搭建方法。与 PHP 的方法不同，这种方法无需服务器 &#x2F; VPS，只需要一个域名（<del>当然如果你可以珂学上网那当我没说</del>）。</p>
-<h2 id="一、准备"><a href="#一、准备" class="headerlink" title="一、准备"></a>一、准备</h2><h3 id="1-1-不要￥的"><a href="#1-1-不要￥的" class="headerlink" title="1.1 不要￥的"></a>1.1 不要￥的</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://github.com/">GitHub</a> 账号；</li>
-<li><a target="_blank" rel="noopener" href="https://www.cloudflare-cn.com/">Cloudflare</a> 账号。</li>
-</ol>
-<h3 id="1-2-也许要￥的"><a href="#1-2-也许要￥的" class="headerlink" title="1.2 也许要￥的"></a>1.2 也许要￥的</h3><ol>
-<li>一个域名，当然是白嫖最好，<del>当然如果你可以珂学上网那当我没说</del>。</li>
-</ol>
-<h2 id="二、图片储存"><a href="#二、图片储存" class="headerlink" title="二、图片储存"></a>二、图片储存</h2><h3 id="2-1-创建仓库"><a href="#2-1-创建仓库" class="headerlink" title="2.1 创建仓库"></a>2.1 创建仓库</h3><p>我们在 GitHub 创建一个仓库，命名随意，这里我起名为 <code>imgAPI</code>，<del>当然你也可以不存在 GitHub 上而是随便找个地方存</del>。</p>
-<p>我们勾选 <code>Add a README file</code>，这样可以减少一些麻烦。</p>
-<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/eb9fr6f9.png"></p>
-<p>然后就直接点击 <code>Create repository</code> 创建仓库！</p>
-<h3 id="2-2-图片重命名"><a href="#2-2-图片重命名" class="headerlink" title="2.2 图片重命名"></a>2.2 图片重命名</h3><p>我们要在本地对我们的图片文件进行重命名，这会让我们接下来的工作化繁为简。</p>
-<p>我们先要确保所有图片的扩展名一致，如果不一致可以通过“画图”来转换。</p>
-<p>我们打开储存图片文件的文件夹，选中所有图片，随便右键点击一张图片，重命名为 <code>你想要的前缀(1).扩展名</code>，注意要用英文（半角）括号，这里我重命名为 <code>pic(1).jfif</code>。</p>
-<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/d5jkjots.png"></p>
-<h3 id="2-3-图片上传"><a href="#2-3-图片上传" class="headerlink" title="2.3 图片上传"></a>2.3 图片上传</h3><p>GitHub 对仓库的网址规则是：<code>https://github.com/用户名/仓库名</code>。我们把网址中的 <code>github.com</code> 改为 <code>github.dev</code>，进入 GitHub 在线 VSCode。如果跳出 OAuth 授权页面，我们选择同意。</p>
-<p>接下来我们直接把上一步重命名的图片拖入左边的“资源管理器”中，上传到 GitHub。</p>
-<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/d2ns1fdy.png"></p>
-<p>最后按下 <code>Ctrl+Shift+G</code> 或点击左边黑条的分支状图标，在上面的 <code>Message</code> 输入框中随便输入一些信息，点击 <code>Commit &amp; Push</code> 按钮提交。</p>
-<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/xsyhlm1l.png"></p>
-<h2 id="三、API-制作与部署"><a href="#三、API-制作与部署" class="headerlink" title="三、API 制作与部署"></a>三、API 制作与部署</h2><h3 id="3-1-创建-Worker"><a href="#3-1-创建-Worker" class="headerlink" title="3.1 创建 Worker"></a>3.1 创建 Worker</h3><p>打开 Cloudflare 仪表板，在左侧导航栏中点击 <code>Workers</code>，再点击蓝色的 <code>新建服务</code> 按钮。按照指引先创建自己的自定义域（如果之前已经创建过就不用），再创建服务，名称随意，这里我也起名为 <code>imgAPI</code>。</p>
-<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/6w8s7fbx.png"></p>
-<h3 id="3-2-编写代码"><a href="#3-2-编写代码" class="headerlink" title="3.2 编写代码"></a>3.2 编写代码</h3><p>服务创建完成后，点击右上角的 <code>快速编辑</code> 按钮，进入编辑页面。在左侧代码编辑区输入这段代码：（请根据情况自行调整第 7 行的中文内容，不要添加或删除引号，使用阿拉伯数字）</p>
-<pre><code class="javascript">export default &#123;
-  async fetch(request, env) &#123;
-    return await handleRequest(request)
-  &#125;
-&#125;
-
-const num = 图片张数, usr = &quot;用户名&quot;, rep = &quot;仓库名&quot;, bch = &quot;分支名（默认为main）&quot;, pre = &quot;图片前缀&quot;, suf = &quot;图片后缀&quot;
-
-async function handleRequest(request) &#123;
-  var id = Math.floor(Math.random() * num + 1)
-  var url = `https://ghproxy.com/https://raw.githubusercontent.com/$&#123;usr&#125;/$&#123;rep&#125;/$&#123;bch&#125;/$&#123;pre&#125;($&#123;id&#125;).$&#123;suf&#125;`
-  return Response.redirect(url, 302)
-&#125;
-</code></pre>
-<p>修改后，点击 <code>发送</code> 按钮，显示图示界面且红框中显示的链接可以访问即为成功。</p>
-<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/fr3ktki5.png"></p>
-<p>点击代码编辑区下方的 <code>保存并部署</code> 按钮或按下 <code>Ctrl+S</code> ，等待部署完成。</p>
-<h3 id="3-3-域名绑定"><a href="#3-3-域名绑定" class="headerlink" title="3.3 域名绑定"></a>3.3 域名绑定</h3><p>这时，我们的随机图已经可以运行了，但是由于 Workers 在国内被墙的问题，我们需要用域名 + CDN 加速来让国内也可以访问。</p>
-<p>首先需要一个在 Cloudflare 处于活动状态的域名，说白了就是要绑定在自家的域名才可以。我们给这个域名添加一条 DNS CNAME 记录，从你的域名（这里我选 <code>img-api.heyc.eu.org</code>）指向你的 workers.dev 的域名（我的是 <code>imgapi.heycnb.workers.dev</code>），注意一定要打开橙色小云朵（CDN 加速）。</p>
-<p>退回到服务主页面，点击下方横条上的 <code>触发器</code> 选项，再往下翻，点击 <code>添加自定义域</code> 按钮，输入你刚刚添加了 DNS 记录的域名，再次点击 <code>添加自定义域</code> 按钮即可。</p>
-<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/m6idavaz.png"></p>
-<h2 id="四、大功告成"><a href="#四、大功告成" class="headerlink" title="四、大功告成"></a>四、大功告成</h2><p>现在我们的随机图就完成了，我们可以通过刚刚绑定的域名来访问，我的随机图展示链接是：<a target="_blank" rel="noopener" href="https://www.luogu.com.cn/paste/hosnqhrx">https://www.luogu.com.cn/paste/hosnqhrx</a>。</p>
-
         
     </div>
     </div>
@@ -286,58 +240,7 @@ class="article article-type-post"
     <div class="article-entry post-inner-html">
         
         <p>相信大家都有过这样的经历。</p>
-<p>下面给出几种方案，可行性与安全性评分用 ⭐ 的数量表示，最多 $5$ 个。</p>
-<h2 id="思路-1-钻操作系统空子"><a href="#思路-1-钻操作系统空子" class="headerlink" title="思路#1 钻操作系统空子"></a>思路#1 钻操作系统空子</h2><p>即使用操作系统的某些功能达到使用电脑的目的。</p>
-<h3 id="方案-1-新用户"><a href="#方案-1-新用户" class="headerlink" title="方案#1 新用户"></a>方案#1 新用户</h3><ul>
-<li>可行性：⭐⭐⭐⭐⭐</li>
-<li>安全性：⭐⭐</li>
-</ul>
-<p>（家长让你用电脑时）在电脑设置或控制面板中新建用户即可。</p>
-<p>优点就是使用方便，但是每次使用完后要记得注销并切换登录用户，否则就会被发现的！&#x2F;kk</p>
-<p>如果家长细查，也不是查不到。</p>
-<h3 id="方案-2-清除密码"><a href="#方案-2-清除密码" class="headerlink" title="方案#2 清除密码"></a>方案#2 清除密码</h3><ul>
-<li>可行性：⭐⭐⭐⭐</li>
-<li>安全性：⭐</li>
-</ul>
-<p>此方法需要使用者有一定的计算机操作基础。</p>
-<p>电脑开机时进入 Windows PE 环境（<del>至于上哪去找就不是我的逝啦</del>），使用某些工具清除用户密码即可。</p>
-<p>缺点很明显：密码没了，人也没了。</p>
-<p>关于 Windows PE：建议使用微 PE，<a target="_blank" rel="noopener" href="https://www.wepe.com.cn/">link</a>。</p>
-<h2 id="思路-2-不使用电脑硬盘内的系统"><a href="#思路-2-不使用电脑硬盘内的系统" class="headerlink" title="思路#2 不使用电脑硬盘内的系统"></a>思路#2 不使用电脑硬盘内的系统</h2><p>顾名思义，就是使用其他来源的系统，如内置硬盘双系统、外接硬盘等。</p>
-<h3 id="方案-3-多系统"><a href="#方案-3-多系统" class="headerlink" title="方案#3 多系统"></a>方案#3 多系统</h3><ul>
-<li>可行性：⭐⭐⭐</li>
-<li>安全性：⭐⭐⭐⭐</li>
-</ul>
-<p>此方法需要使用者有一定的计算机操作基础。</p>
-<p>在电脑内置硬盘上安装多个系统，或者在多个内置硬盘上安装多个系统。</p>
-<p>安全性较高，但是制作过程较为危险。</p>
-<p>由于本方法难度较高，这里给出制作方法。</p>
-<h4 id="制作教程"><a href="#制作教程" class="headerlink" title="制作教程"></a>制作教程</h4><ol>
-<li>制作一个系统安装盘（可以从微硬官网下载制作工具，或者下载 iso 镜像并写入安装盘）。</li>
-<li>插着安装盘重启电脑，进入 BIOS 更改第一启动项为安装盘（或在下一步临时使用安装盘启动）。</li>
-<li>退出 BIOS，重启电脑，电脑会从安装盘中启动。</li>
-<li>接下来跟着安装向导安装即可，注意不要安装到已经安装了系统的硬盘分区中，否则原系统就<del>无啦</del>会被覆盖。</li>
-</ol>
-<h3 id="方案-4-WTG"><a href="#方案-4-WTG" class="headerlink" title="方案#4 WTG"></a>方案#4 WTG</h3><ul>
-<li>可行性：⭐</li>
-<li>安全性：⭐⭐⭐⭐⭐（在 WTG 启动盘保存良好的条件下）</li>
-</ul>
-<p>WTG，即 Windows To Go 的缩写，是一种可以将 Windows 8 及以上系统装入 U 盘即插即用的技术，<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/Windows%20To%20Go">了解更多</a>。</p>
-<p>由于 Windows To Go 的制作方法十分困难，所以这里给出教程。</p>
-<h4 id="制作教程-1"><a href="#制作教程-1" class="headerlink" title="制作教程"></a>制作教程</h4><p>下为官方工具制作教程（参考文章 <a target="_blank" rel="noopener" href="https://sspai.com/post/44699">link</a>），如果任意一步出现问题，可以使用<a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv15813796" title="是我写的呢">第三方工具制作教程</a>。</p>
-<ol>
-<li>制作前准备：一个高速 U 盘 &#x2F; 硬盘（速度一定要快，并且是复制小文件时快）和 Windows 企业或教育版镜像（可以在 <a target="_blank" rel="noopener" href="https://msdn.itellyou.cn/">link</a> 处下载）。</li>
-<li>打开控制面板（这个应该不用我多说了吧）。</li>
-<li>将右上角的“查看方式”改为“大图标”，找到“Windows To Go”选项并点击进入。</li>
-<li>在方框中选择自己的 U 盘 &#x2F; 硬盘，点击“下一步”。</li>
-<li>点击“添加搜索位置”，把下载的 Windows 镜像的文件夹添加。</li>
-<li>在上面的方框中选择 Windows 8&#x2F;8.1&#x2F;10 企业版&#x2F;教育版，点击“下一步”。</li>
-<li>选择设置 Bitlocker，点击“下一步”或“跳过”。</li>
-<li>点击“创建”，休息一下吧。</li>
-<li>工具制作完成后，制作工具会询问是否在重启电脑时从 WTG 启动盘启动，可根据自己的情况选择，若选择“否”，则需要在电脑开机时手动调整启动项。</li>
-<li>WTG 已就绪，进入 WTG 系统时需要先进行个性化配置，就像新系统刚装好时一样。</li>
-</ol>
-
+<p>下面给出几种方案，可行性与安全性评分用 ⭐ 的数量表示，最多 5 个。</p>
         
     </div>
     </div>
