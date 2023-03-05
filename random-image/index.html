@@ -1,186 +1,237 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
 
-    
-    <title>从零开始，教你搭建一个自己的随机图 | Heyc&#39;s Blog</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-    <meta name="description" content="&lt;h2 id=&#34;零、前言&#34;&gt;&lt;a href=&#34;#零、前言&#34; class=&#34;headerlink&#34; title=&#34;零、前言&#34;&gt;&lt;/a&gt;零、前言&lt;/h2&gt;&lt;p&gt;不知道大家有没有用过随机图 API。这种东西对于使用者来说非常方便，只需要引用 API 链接就可以。而网上的大部分教程都是基于 PHP，所以我这次来介绍一下 GitHub+Cloudflare Workers 的搭建方法。与 PHP 的方法不同，这种方法无需服务器 &amp;#x2F; VPS，只需要一个域名（&lt;del&gt;当然如果你可以珂学上网那当我没说&lt;/del&gt;）。&lt;/p&gt;">
-    <meta name="keywords" content="">
-
-    
-
-    <meta property="og:locale" content="zh-cn" />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content= "从零开始，教你搭建一个自己的随机图 | Heyc&#39;s Blog"  />
-    <meta property="og:description" content= "&lt;h2 id=&#34;零、前言&#34;&gt;&lt;a href=&#34;#零、前言&#34; class=&#34;headerlink&#34; title=&#34;零、前言&#34;&gt;&lt;/a&gt;零、前言&lt;/h2&gt;&lt;p&gt;不知道大家有没有用过随机图 API。这种东西对于使用者来说非常方便，只需要引用 API 链接就可以。而网上的大部分教程都是基于 PHP，所以我这次来介绍一下 GitHub+Cloudflare Workers 的搭建方法。与 PHP 的方法不同，这种方法无需服务器 &amp;#x2F; VPS，只需要一个域名（&lt;del&gt;当然如果你可以珂学上网那当我没说&lt;/del&gt;）。&lt;/p&gt;" />
-    <meta property="og:url" content="https://blog.heyc.eu.org/random-image/index.html" />
-    <meta property="og:site_name" content="" />
-    <meta property="article:author" content="Yangcheng He" />
-    <meta property="article:publisher" content="" />
-    <meta property="og:description" content="&lt;h2 id=&#34;零、前言&#34;&gt;&lt;a href=&#34;#零、前言&#34; class=&#34;headerlink&#34; title=&#34;零、前言&#34;&gt;&lt;/a&gt;零、前言&lt;/h2&gt;&lt;p&gt;不知道大家有没有用过随机图 API。这种东西对于使用者来说非常方便，只需要引用 API 链接就可以。而网上的大部分教程都是基于 PHP，所以我这次来介绍一下 GitHub+Cloudflare Workers 的搭建方法。与 PHP 的方法不同，这种方法无需服务器 &amp;#x2F; VPS，只需要一个域名（&lt;del&gt;当然如果你可以珂学上网那当我没说&lt;/del&gt;）。&lt;/p&gt;" />
-    <meta name="twitter:title" content="从零开始，教你搭建一个自己的随机图 | Heyc&#39;s Blog"/>
-    <meta name="twitter:description" content="&lt;h2 id=&#34;零、前言&#34;&gt;&lt;a href=&#34;#零、前言&#34; class=&#34;headerlink&#34; title=&#34;零、前言&#34;&gt;&lt;/a&gt;零、前言&lt;/h2&gt;&lt;p&gt;不知道大家有没有用过随机图 API。这种东西对于使用者来说非常方便，只需要引用 API 链接就可以。而网上的大部分教程都是基于 PHP，所以我这次来介绍一下 GitHub+Cloudflare Workers 的搭建方法。与 PHP 的方法不同，这种方法无需服务器 &amp;#x2F; VPS，只需要一个域名（&lt;del&gt;当然如果你可以珂学上网那当我没说&lt;/del&gt;）。&lt;/p&gt;"/>
-    <script type="application/ld+json">
-        {
-            "description": "&lt;h2 id=&#34;零、前言&#34;&gt;&lt;a href=&#34;#零、前言&#34; class=&#34;headerlink&#34; title=&#34;零、前言&#34;&gt;&lt;/a&gt;零、前言&lt;/h2&gt;&lt;p&gt;不知道大家有没有用过随机图 API。这种东西对于使用者来说非常方便，只需要引用 API 链接就可以。而网上的大部分教程都是基于 PHP，所以我这次来介绍一下 GitHub+Cloudflare Workers 的搭建方法。与 PHP 的方法不同，这种方法无需服务器 &amp;#x2F; VPS，只需要一个域名（&lt;del&gt;当然如果你可以珂学上网那当我没说&lt;/del&gt;）。&lt;/p&gt;",
-            "author": { "@type": "Person", "name": "Yangcheng He" },
-            "@type": "BlogPosting",
-            "url": "https://blog.heyc.eu.org/random-image/index.html",
-            "publisher": {
-            "@type": "Organization",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "https://blog.heyc.eu.orgundefined"
-            },
-            "name": "Yangcheng He"
-            },
-            "headline": "从零开始，教你搭建一个自己的随机图 | Heyc&#39;s Blog",
-            "datePublished": "2023-01-15T03:27:00.000Z",
-            "mainEntityOfPage": {
-                "@type": "WebPage",
-                "@id": "https://blog.heyc.eu.org/random-image/index.html"
-            },
-            "@context": "http://schema.org"
-        }
-    </script>
+<link rel="stylesheet" href="/css/main.css">
 
 
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-    
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.heyc.eu.org","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.14.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    
+    <meta name="description" content="零、前言不知道大家有没有用过随机图 API。这种东西对于使用者来说非常方便，只需要引用 API 链接就可以。而网上的大部分教程都是基于 PHP，所以我这次来介绍一下 GitHub+Cloudflare Workers 的搭建方法。与 PHP 的方法不同，这种方法无需服务器 &#x2F; VPS，只需要一个域名（当然如果你可以珂学上网那当我没说）。">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="从零开始，教你搭建一个自己的随机图">
+<meta property="og:url" content="https://blog.heyc.eu.org/random-image/index.html">
+<meta property="og:site_name" content="Heyc&#39;s Blog">
+<meta property="og:description" content="零、前言不知道大家有没有用过随机图 API。这种东西对于使用者来说非常方便，只需要引用 API 链接就可以。而网上的大部分教程都是基于 PHP，所以我这次来介绍一下 GitHub+Cloudflare Workers 的搭建方法。与 PHP 的方法不同，这种方法无需服务器 &#x2F; VPS，只需要一个域名（当然如果你可以珂学上网那当我没说）。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.luogu.com.cn/upload/image_hosting/eb9fr6f9.png">
+<meta property="og:image" content="https://cdn.luogu.com.cn/upload/image_hosting/d5jkjots.png">
+<meta property="og:image" content="https://cdn.luogu.com.cn/upload/image_hosting/d2ns1fdy.png">
+<meta property="og:image" content="https://cdn.luogu.com.cn/upload/image_hosting/xsyhlm1l.png">
+<meta property="og:image" content="https://cdn.luogu.com.cn/upload/image_hosting/6w8s7fbx.png">
+<meta property="og:image" content="https://cdn.luogu.com.cn/upload/image_hosting/fr3ktki5.png">
+<meta property="og:image" content="https://cdn.luogu.com.cn/upload/image_hosting/m6idavaz.png">
+<meta property="article:published_time" content="2023-01-15T03:27:00.000Z">
+<meta property="article:modified_time" content="2023-02-05T09:47:58.103Z">
+<meta property="article:author" content="Yangcheng He">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.luogu.com.cn/upload/image_hosting/eb9fr6f9.png">
 
-    
 
-    
-
-    
-
-    
-
-    
-
-    
-<link rel="stylesheet" href="/dist/build.css?v=1654266144177.css">
+<link rel="canonical" href="https://blog.heyc.eu.org/random-image/">
 
 
-    
-<link rel="stylesheet" href="/dist/custom.css?v=1654266144177.css">
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.heyc.eu.org/random-image/","path":"random-image/","title":"从零开始，教你搭建一个自己的随机图"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>从零开始，教你搭建一个自己的随机图 | Heyc's Blog</title>
+  
 
 
-    <script>
-        window.isPost = true
-        window.aomori = {
-            
-            
-            
-        }
-        window.aomori_logo_typed_animated = false
-        window.aomori_search_algolia = false
 
-    </script>
 
-<meta name="generator" content="Hexo 6.3.0"></head>
 
-<body>
 
-    <div class="container">
-    <header class="header">
-        <div class="header-type">
-            
-            <div class="header-type-inner">
-                
-                    <a class="header-type-title" href="/">Heyc&#39;s Blog</a>
-                
-    
-                
-            </div>
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+<link rel="dns-prefetch" href="https://comments.heyc.eu.org">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Heyc's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E3%80%81%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">零、前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%87%86%E5%A4%87"><span class="nav-number">2.</span> <span class="nav-text">一、准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%B8%8D%E8%A6%81%EF%BF%A5%E7%9A%84"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 不要￥的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%B9%9F%E8%AE%B8%E8%A6%81%EF%BF%A5%E7%9A%84"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 也许要￥的</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%9B%BE%E7%89%87%E5%82%A8%E5%AD%98"><span class="nav-number">3.</span> <span class="nav-text">二、图片储存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%9B%E5%BB%BA%E4%BB%93%E5%BA%93"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 创建仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%9B%BE%E7%89%87%E9%87%8D%E5%91%BD%E5%90%8D"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 图片重命名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 图片上传</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81API-%E5%88%B6%E4%BD%9C%E4%B8%8E%E9%83%A8%E7%BD%B2"><span class="nav-number">4.</span> <span class="nav-text">三、API 制作与部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%88%9B%E5%BB%BA-Worker"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 创建 Worker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E7%BC%96%E5%86%99%E4%BB%A3%E7%A0%81"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 编写代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%9F%9F%E5%90%8D%E7%BB%91%E5%AE%9A"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 域名绑定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%A4%A7%E5%8A%9F%E5%91%8A%E6%88%90"><span class="nav-number">5.</span> <span class="nav-text">四、大功告成</span></a></li></ol></div>
         </div>
-        <div class="header-menu">
-            <div class="header-menu-inner">
-                
-            </div>
-            <div class="header-menu-social">
-                
-            </div>
-        </div>
+        <!--/noindex-->
 
-        <div class="header-menu-mobile">
-            <div class="header-menu-mobile-inner" id="mobile-menu-open">
-                <i class="icon icon-menu"></i>
-            </div>
-        </div>
-    </header>
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Yangcheng He</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
 
-    <div class="header-menu-mobile-menu">
-        <div class="header-menu-mobile-menu-bg"></div>
-        <div class="header-menu-mobile-menu-wrap">
-            <div class="header-menu-mobile-menu-inner">
-                <div class="header-menu-mobile-menu-close" id="mobile-menu-close">
-                    <i class="icon icon-cross"></i>
-                </div>
-                <div class="header-menu-mobile-menu-list">
-                    
-                </div>
-            </div>
         </div>
+      </div>
     </div>
 
-</div>
+    
+  </aside>
 
-    <div class="container">
-        <div class="main">
-            <section class="inner">
-                <section class="inner-main">
-                    <div class="post">
-    <article id="post-cldr7exyz0002lbw85b4k2jad" class="article article-type-post" itemscope
-    itemprop="blogPost">
 
-    <div class="article-inner">
+    </div>
 
-        
-          
-        
-        
-        
+    <div class="main-inner post posts-expand">
 
-        
-        <header class="article-header">
-            
-  
-    <h1 class="article-title" itemprop="name">
-      从零开始，教你搭建一个自己的随机图
-    </h1>
+
   
 
-        </header>
-        
 
-        <div class="article-more-info article-more-info-post hairline">
+<div class="post-block">
+  
+  
 
-            <div class="article-date">
-  <time datetime="2023-01-15T03:27:00.000Z" itemprop="datePublished">2023-01-15</time>
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.heyc.eu.org/random-image/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Yangcheng He">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Heyc's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="从零开始，教你搭建一个自己的随机图 | Heyc's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从零开始，教你搭建一个自己的随机图
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-15 11:27:00" itemprop="dateCreated datePublished" datetime="2023-01-15T11:27:00+08:00">2023-01-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-02-05 17:47:58" itemprop="dateModified" datetime="2023-02-05T17:47:58+08:00">2023-02-05</time>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/random-image/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/random-image/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
 </div>
-
-            
-
-            
-            <div class="article-tag">
-                <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li></ul>
-            </div>
-            
-
-            
 
         </div>
+      </header>
 
-        <div class="article-entry post-inner-html hairline" itemprop="articleBody">
-            <h2 id="零、前言"><a href="#零、前言" class="headerlink" title="零、前言"></a>零、前言</h2><p>不知道大家有没有用过随机图 API。这种东西对于使用者来说非常方便，只需要引用 API 链接就可以。而网上的大部分教程都是基于 PHP，所以我这次来介绍一下 GitHub+Cloudflare Workers 的搭建方法。与 PHP 的方法不同，这种方法无需服务器 &#x2F; VPS，只需要一个域名（<del>当然如果你可以珂学上网那当我没说</del>）。</p>
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="零、前言"><a href="#零、前言" class="headerlink" title="零、前言"></a>零、前言</h2><p>不知道大家有没有用过随机图 API。这种东西对于使用者来说非常方便，只需要引用 API 链接就可以。而网上的大部分教程都是基于 PHP，所以我这次来介绍一下 GitHub+Cloudflare Workers 的搭建方法。与 PHP 的方法不同，这种方法无需服务器 &#x2F; VPS，只需要一个域名（<del>当然如果你可以珂学上网那当我没说</del>）。</p>
 <span id="more"></span>
 
 <h2 id="一、准备"><a href="#一、准备" class="headerlink" title="一、准备"></a>一、准备</h2><h3 id="1-1-不要￥的"><a href="#1-1-不要￥的" class="headerlink" title="1.1 不要￥的"></a>1.1 不要￥的</h3><ol>
@@ -229,187 +280,99 @@ async function handleRequest(request) &#123;
 <p><img src="https://cdn.luogu.com.cn/upload/image_hosting/m6idavaz.png"></p>
 <h2 id="四、大功告成"><a href="#四、大功告成" class="headerlink" title="四、大功告成"></a>四、大功告成</h2><p>现在我们的随机图就完成了，我们可以通过刚刚绑定的域名来访问，我的随机图展示链接是：<a target="_blank" rel="noopener" href="https://www.luogu.com.cn/paste/hosnqhrx">https://www.luogu.com.cn/paste/hosnqhrx</a>。</p>
 
-        </div>
-
     </div>
 
     
-
+    
     
 
-    
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag"># 技术</a>
+          </div>
 
-    
-
-    
-
-    
-<nav class="article-nav">
-  
-    <a href="/hello-hexo/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-caption">下一篇</div>
-      <div class="article-nav-title">
         
-          Hello Hexo
-        
-      </div>
-    </a>
-  
-  
-    <a href="/use-your-computer/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-caption">上一篇</div>
-      <div class="article-nav-title">电脑密码被家长改了，怎么才能夺回使用权？</div>
-    </a>
-  
-</nav>
 
-
-    <section class="share">
-        <div class="share-title">分享</div>
-        <a class="share-item" target="_blank"
-            href="https://twitter.com/share?text=从零开始，教你搭建一个自己的随机图 - Heyc's Blog&url=https%3A%2F%2Fblog.heyc.eu.org%2Frandom-image%2F">
-            <ion-icon name="logo-twitter"></ion-icon>
-        </a>
-        <a class="share-item" target="_blank"
-            href="https://www.facebook.com/sharer.php?title=从零开始，教你搭建一个自己的随机图 - Heyc's Blog&u=https%3A%2F%2Fblog.heyc.eu.org%2Frandom-image%2F">
-            <ion-icon name="logo-facebook"></ion-icon>
-        </a>
-        <!-- <a class="share-item" target="_blank"
-            href="https://service.weibo.com/share/share.php?title=从零开始，教你搭建一个自己的随机图 - Heyc's Blog&url=https://blog.heyc.eu.org/random-image/&pic=">
-            <div class="n-icon n-icon-weibo"></div>
-        </a> -->
-    </section>
-
-</article>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-                </section>
-            </section>
-
-            
-            <aside class="sidebar ">
-                
-
-
-<div class="widget" id="widget">
-    
-      
-  <div class="widget-wrap">
-    <div class="widget-inner">
-      <div class="toc post-toc-html"></div>
-    </div>
-  </div>
-
-    
-      
-
-    
-      
-  <div class="widget-wrap widget-tags">
-    <div class="widget-title"><span>Tags</span></div>
-    <div class="widget-inner">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%80%E5%A0%86%E5%BA%9F%E8%AF%9D/" rel="tag">一堆废话</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A1%AC%E6%A0%B8/" rel="tag">硬核</a></li></ul>
-    </div>
-  </div>
-
-
-    
-      
-  <div class="widget-wrap widget-recent-posts">
-    <div class="widget-title"><span>Recent Posts</span></div>
-    <div class="widget-inner">
-      <ul>
-        
-          <li>
-            <a href="/hello-hexo/">Hello Hexo</a>
-          </li>
-        
-          <li>
-            <a href="/random-image/">从零开始，教你搭建一个自己的随机图</a>
-          </li>
-        
-          <li>
-            <a href="/use-your-computer/">电脑密码被家长改了，怎么才能夺回使用权？</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-    
-      
-  <div class="widget-wrap widget-archive">
-    <div class="widget-title"><span>Archive</span></div>
-    <div class="widget-inner">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a></li></ul>
-    </div>
-  </div>
-
-
-    
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/use-your-computer/" rel="prev" title="电脑密码被家长改了，怎么才能夺回使用权？">
+                  <i class="fa fa-chevron-left"></i> 电脑密码被家长改了，怎么才能夺回使用权？
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/hello-hexo/" rel="next" title="Hello Hexo">
+                  Hello Hexo <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
 </div>
 
-<div id="backtop"><i class="icon icon-arrow-up"></i></div>
-            </aside>
-            
-        </div>
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yangcheng He</span>
+  | <a href="https://icp.gov.moe/?keyword=20234392" target="_blank">萌ICP备20234392号</a>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
     </div>
+  </footer>
 
-    <footer class="footer">
-    <div class="footer-wave">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#3c4859" fill-opacity="1" d="M0,160L60,181.3C120,203,240,245,360,240C480,235,600,181,720,186.7C840,192,960,256,1080,261.3C1200,267,1320,213,1380,186.7L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
-    </div>
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
 
-    <!-- Please do not remove this -->
-    <!-- 开源不易，请勿删除 -->
-    <div class="footer-wrap">
-        <div class="footer-inner"> 
-            Heyc&#39;s Blog &copy; 2023<br>
-            Powered By Hexo · Theme <a href="https://linhong.me/" target="_blank">Aomori</a> : <a href="https://github.com/lh1me/hexo-theme-aomori" target="_blank">GitHub</a> · <a href="https://icp.gov.moe/?keyword=20234392" target="_blank">萌ICP备20234392号</a>
-        </div>
-    </div>
-
-</footer>
-
-<script type="module" src="https://unpkg.com/ionicons@6.0.2/dist/ionicons/ionicons.esm.js"></script>
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
 
 
 
 
-<script src="/dist/build.js?1654266144177.js"></script>
-
-
-<script src="/dist/custom.js?1654266144177.js"></script>
+  
 
 
 
 
-
-
-
-
-
-
-
-
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://comments.heyc.eu.org","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"libUrl":"https://unpkg.com/@waline/client@v2/dist/waline.js","locale":{"placeholder":"说点什么..."},"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/random-image/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
 
 </body>
-
 </html>
